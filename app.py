@@ -22,7 +22,7 @@ MONTH_NAMES = {1:"Jan",2:"Feb",3:"Mar",4:"Apr",5:"May",6:"Jun",
 DAY_NAMES   = {0:"Mon",1:"Tue",2:"Wed",3:"Thu",4:"Fri",5:"Sat",6:"Sun"}
 
 # ── Load data ─────────────────────────────────────────────────────────────────
-@st.cache_data
+@st.cache_resource
 def load_data():
     # Works whether you run from project root or dashboard/
     for path in [
