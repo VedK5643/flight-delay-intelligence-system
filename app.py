@@ -35,6 +35,12 @@ def load_model():
     return None
 
 df = load_data()
+@st.cache_data
+def get_encodings(df):
+    carrier_enc = df.groupby("OP_CARRIER")["ARR_DEL15"].mean().to_dict()
+    origin_enc  = df.groupby("ORIGIN")["ARR_DEL15"].mean().to_dict()
+    dest_enc    = df.groupby("DEST")["ARR_DEL15"].mean().to_dict()
+    return carrier_enc, origin_enc, dest_enc
 
 # Derived
 if "ARR_DEL15" not in df.columns:
@@ -121,9 +127,7 @@ elif page == "🔮 Delay Predictor":
     st.caption("Enter flight details to get a delay probability from the XGBoost model.")
     st.markdown("---")
 
-    carrier_enc = df.groupby("OP_CARRIER")["ARR_DEL15"].mean().to_dict()
-    origin_enc  = df.groupby("ORIGIN")["ARR_DEL15"].mean().to_dict()
-    dest_enc    = df.groupby("DEST")["ARR_DEL15"].mean().to_dict()
+    carrier_enc, origin_enc, dest_enc = get_encodings(df)
     route_dist_map = df.groupby(['ORIGIN','DEST'])['DISTANCE'].first().to_dict()
     col_form, col_result = st.columns([1, 1], gap="large")
 
