@@ -13,7 +13,7 @@
 
 ## 🔗 Live Demo
 
-**[➜ Open Dashboard](#)** ← *(link after deployment)*
+**[➜ Open Dashboard](https://flight-delay-intelligence-system-vedagya.streamlit.app)** 
 
 ---
 
@@ -165,12 +165,10 @@ Dashboard             — Streamlit analytics platform
 
 ---
 
-## 🚧 Roadmap
+## 🚧 Upcoming
 
-- [ ] SHAP explainability page — feature importance per prediction
+- [ ] SHAP explainability — feature importance per prediction
 - [ ] Hyperparameter tuning with GridSearchCV
-- [ ] LightGBM comparison
-- [ ] `src/` production pipeline scripts
 
 ---
 
