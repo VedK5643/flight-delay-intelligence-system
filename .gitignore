@@ -1,0 +1,89 @@
+# =========================
+# Python
+# =========================
+__pycache__/
+*.py[cod]
+
+# =========================
+# Jupyter
+# =========================
+.ipynb_checkpoints/
+
+# =========================
+# VS Code
+# =========================
+.vscode/
+
+# =========================
+# Conda / Virtual Envs
+# =========================
+.venv/
+venv/
+env/
+
+# =========================
+# Data Files
+# =========================
+data/raw/*.csv
+data/raw/*.zip
+data/raw/*.xlsx
+
+data/processed/*.csv
+data/processed/*.parquet
+data/processed/*.xlsx
+
+# Keep folder structure
+!data/raw/.gitkeep
+!data/processed/.gitkeep
+
+# =========================
+# Models
+# =========================
+models/*.pkl
+models/*.pickle
+
+# Keep folder structure
+!models/.gitkeep
+
+# =========================
+# Reports
+# =========================
+reports/*.png
+reports/*.jpg
+reports/*.jpeg
+reports/*.pdf
+
+# Keep folder structure
+!reports/.gitkeep
+
+# =========================
+# Streamlit
+# =========================
+.streamlit/
+
+# =========================
+# Environment Variables
+# =========================
+.env
+.env.*
+
+# =========================
+# Large / Temp Files
+# =========================
+*.log
+*.tmp
+
+# =========================
+# Src compiled
+# =========================
+src/__pycache__/
+src/*.pyc
+
+# =========================
+# OS Files
+# =========================
+.DS_Store
+Thumbs.db
+
+# Keep all .gitkeep files
+!**/.gitkeep
