@@ -10,6 +10,17 @@ st.set_page_config(
     layout="wide"
 )
 
+CARRIER_NAMES = {
+    "WN":"Southwest","DL":"Delta","AA":"American","UA":"United",
+    "OO":"SkyWest","EV":"ExpressJet","B6":"JetBlue","MQ":"Envoy Air",
+    "AS":"Alaska","US":"US Airways","NK":"Spirit","F9":"Frontier",
+    "HA":"Hawaiian","VX":"Virgin America","YX":"Republic","OH":"PSA",
+    "9E":"Endeavor","YV":"Mesa","FL":"AirTran","G4":"Allegiant",
+}
+MONTH_NAMES = {1:"Jan",2:"Feb",3:"Mar",4:"Apr",5:"May",6:"Jun",
+               7:"Jul",8:"Aug",9:"Sep",10:"Oct",11:"Nov",12:"Dec"}
+DAY_NAMES   = {0:"Mon",1:"Tue",2:"Wed",3:"Thu",4:"Fri",5:"Sat",6:"Sun"}
+
 # ── Load data ─────────────────────────────────────────────────────────────────
 @st.cache_data
 def load_data():
@@ -19,7 +30,11 @@ def load_data():
         "../data/processed/flights_processed.parquet",
     ]:
         if os.path.exists(path):
-            return pd.read_parquet(path)
+            df = pd.read_parquet(path)
+            if "ARR_DEL15" not in df.columns:
+                df["ARR_DEL15"] = (df["ARR_DELAY"] >= 15).astype(int)
+            df["CARRIER_NAME"] = df["OP_CARRIER"].map(CARRIER_NAMES).fillna(df["OP_CARRIER"])
+            return df
     st.error("Could not find flights_processed.csv. Run from project root: streamlit run app.py")
     st.stop()
 
@@ -35,29 +50,18 @@ def load_model():
     return None
 
 df = load_data()
+
 @st.cache_data
-def get_encodings(df):
-    carrier_enc = df.groupby("OP_CARRIER")["ARR_DEL15"].mean().to_dict()
-    origin_enc  = df.groupby("ORIGIN")["ARR_DEL15"].mean().to_dict()
-    dest_enc    = df.groupby("DEST")["ARR_DEL15"].mean().to_dict()
+def get_encodings(_df):
+    carrier_enc = _df.groupby("OP_CARRIER")["ARR_DEL15"].mean().to_dict()
+    origin_enc  = _df.groupby("ORIGIN")["ARR_DEL15"].mean().to_dict()
+    dest_enc    = _df.groupby("DEST")["ARR_DEL15"].mean().to_dict()
     return carrier_enc, origin_enc, dest_enc
 
-# Derived
-if "ARR_DEL15" not in df.columns:
-    df["ARR_DEL15"] = (df["ARR_DELAY"] >= 15).astype(int)
+@st.cache_data
+def get_route_distances(_df):
+    return _df.groupby(['ORIGIN','DEST'])['DISTANCE'].first().to_dict()
 
-CARRIER_NAMES = {
-    "WN":"Southwest","DL":"Delta","AA":"American","UA":"United",
-    "OO":"SkyWest","EV":"ExpressJet","B6":"JetBlue","MQ":"Envoy Air",
-    "AS":"Alaska","US":"US Airways","NK":"Spirit","F9":"Frontier",
-    "HA":"Hawaiian","VX":"Virgin America","YX":"Republic","OH":"PSA",
-    "9E":"Endeavor","YV":"Mesa","FL":"AirTran","G4":"Allegiant",
-}
-MONTH_NAMES = {1:"Jan",2:"Feb",3:"Mar",4:"Apr",5:"May",6:"Jun",
-               7:"Jul",8:"Aug",9:"Sep",10:"Oct",11:"Nov",12:"Dec"}
-DAY_NAMES   = {0:"Mon",1:"Tue",2:"Wed",3:"Thu",4:"Fri",5:"Sat",6:"Sun"}
-
-df["CARRIER_NAME"] = df["OP_CARRIER"].map(CARRIER_NAMES).fillna(df["OP_CARRIER"])
 
 # ── Sidebar ───────────────────────────────────────────────────────────────────
 st.sidebar.title("✈ Flight Delay Intelligence")
@@ -128,7 +132,7 @@ elif page == "🔮 Delay Predictor":
     st.markdown("---")
 
     carrier_enc, origin_enc, dest_enc = get_encodings(df)
-    route_dist_map = df.groupby(['ORIGIN','DEST'])['DISTANCE'].first().to_dict()
+    route_dist_map = get_route_distances(df)
     col_form, col_result = st.columns([1, 1], gap="large")
 
     with col_form:
