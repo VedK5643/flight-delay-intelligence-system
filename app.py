@@ -1,7 +1,6 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
-import matplotlib.pyplot as plt
 import pickle
 import os
 
@@ -16,11 +15,11 @@ st.set_page_config(
 def load_data():
     # Works whether you run from project root or dashboard/
     for path in [
-        "data/processed/flights_processed.csv",
-        "../data/processed/flights_processed.csv",
+        "data/processed/flights_processed.parquet",
+        "../data/processed/flights_processed.parquet",
     ]:
         if os.path.exists(path):
-            return pd.read_csv(path)
+            return pd.read_parquet(path)
     st.error("Could not find flights_processed.csv. Run from project root: streamlit run app.py")
     st.stop()
 
@@ -125,7 +124,7 @@ elif page == "🔮 Delay Predictor":
     carrier_enc = df.groupby("OP_CARRIER")["ARR_DEL15"].mean().to_dict()
     origin_enc  = df.groupby("ORIGIN")["ARR_DEL15"].mean().to_dict()
     dest_enc    = df.groupby("DEST")["ARR_DEL15"].mean().to_dict()
-
+    route_dist_map = df.groupby(['ORIGIN','DEST'])['DISTANCE'].first().to_dict()
     col_form, col_result = st.columns([1, 1], gap="large")
 
     with col_form:
@@ -147,11 +146,14 @@ elif page == "🔮 Delay Predictor":
         arr_hour = c2.slider("Arrival Hour",   0, 23, 11)
 
         c3, c4 = st.columns(2)
-        month = c3.selectbox("Month",       list(MONTH_NAMES.keys()), format_func=lambda x: MONTH_NAMES[x], index=5)
-        dow   = c4.selectbox("Day of Week", list(DAY_NAMES.keys()),   format_func=lambda x: DAY_NAMES[x])
+        month = c3.selectbox("Month", list(MONTH_NAMES.keys()), format_func=lambda x: MONTH_NAMES[x], index=5)
+        dow   = c4.selectbox("Day of Week", list(DAY_NAMES.keys()), format_func=lambda x: DAY_NAMES[x])
 
-        distance = st.number_input("Distance (miles)", min_value=50, max_value=5000, value=800, step=50)
-        predict  = st.button("Predict", width='stretch', type="primary")
+        
+        distance = int(route_dist_map.get((origin, dest), df['DISTANCE'].mean()))
+
+        st.info(f"Route distance: {distance} miles")
+        predict = st.button("Predict", width='stretch', type="primary")
 
     with col_result:
         st.subheader("Result")
@@ -168,10 +170,11 @@ elif page == "🔮 Delay Predictor":
                     dest_enc.get(dest, 0.18),
                 ]])
                 prob    = model.predict_proba(features)[0][1]
-                delayed = prob >= 0.5
 
-                if delayed:
+                if prob >= 0.5:
                     st.error(f"⚠ Likely Delayed — {prob*100:.1f}% probability")
+                elif prob >= 0.35:
+                    st.warning(f"⚠ Borderline — {prob*100:.1f}% delay probability")
                 else:
                     st.success(f"✅ Likely On Time — {prob*100:.1f}% delay probability")
 

@@ -29,21 +29,14 @@ data/raw/*.zip
 data/raw/*.xlsx
 
 data/processed/*.csv
-data/processed/*.parquet
 data/processed/*.xlsx
 
-# Keep folder structure
-!data/raw/.gitkeep
-!data/processed/.gitkeep
+# Keep parquet (needed for deployment)
+# data/processed/*.parquet
 
 # =========================
 # Models
 # =========================
-models/*.pkl
-models/*.pickle
-
-# Keep folder structure
-!models/.gitkeep
 
 # =========================
 # Reports
@@ -72,12 +65,6 @@ reports/*.pdf
 # =========================
 *.log
 *.tmp
-
-# =========================
-# Src compiled
-# =========================
-src/__pycache__/
-src/*.pyc
 
 # =========================
 # OS Files
