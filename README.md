@@ -56,9 +56,10 @@ flight-delay-intelligence-system/
 ├── notebooks/
 │   ├── 01_data_understanding.ipynb   # Dataset inspection & column analysis
 │   ├── 02_preprocessing.ipynb        # Cleaning, feature extraction, target creation
-│   ├── 03_eda.ipynb                  # Exploratory analysis & delay pattern discovery
+│   ├── 03_EDA.ipynb                  # Exploratory analysis & delay pattern discovery
 │   ├── 04_feature_engineering.ipynb  # Leakage removal, target encoding
 │   └── 05_modeling.ipynb             # Model training & evaluation
+|   └── 06_SHAP.ipynb                 # SHAP Explainabilty feature importance per prediction
 │
 ├──  app.py                           # Streamlit multi-page dashboard
 │
@@ -69,6 +70,10 @@ flight-delay-intelligence-system/
 │   ├── raw/                          # Original BTS CSV files (not tracked)
 │   └── processed/
 │       └── flights_processed.parquet # Cleaned dataset for dashboard
+|
+|──reports/
+|   └──shap_beeswarm.png
+|   └──shap_importance.png
 │
 ├── requirements.txt
 └── README.md
