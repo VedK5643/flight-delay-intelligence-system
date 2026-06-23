@@ -162,13 +162,8 @@ Dashboard             — Streamlit analytics platform
 | ✈ Airline Analytics | Full carrier rankings, reliability scores, delay comparison |
 | 🗺 Airport Intelligence | Delay hotspots, flight volume, riskiest/safest routes |
 | ⚠ Delay Cause Analysis | Cause breakdown by type, airline, and season |
+| 🔬 SHAP Explainability | Feature importance per prediction
 
----
-
-## 🚧 Upcoming
-
-- [ ] SHAP explainability — feature importance per prediction
-- [ ] Hyperparameter tuning with GridSearchCV
 
 ---
 

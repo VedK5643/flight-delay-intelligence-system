@@ -41,7 +41,6 @@ data/processed/*.xlsx
 # =========================
 # Reports
 # =========================
-reports/*.png
 reports/*.jpg
 reports/*.jpeg
 reports/*.pdf

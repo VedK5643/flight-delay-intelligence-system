@@ -74,6 +74,7 @@ page = st.sidebar.radio("Navigate", [
     "✈ Airline Analytics",
     "🗺 Airport Intelligence",
     "⚠ Delay Cause Analysis",
+    "🔬 SHAP Explainability",
 ])
 
 st.sidebar.markdown("---")
@@ -304,6 +305,50 @@ elif page == "🗺 Airport Intelligence":
         safe = route_stats.nsmallest(10,"Delay %")[["Route","Flights","Delay %"]].reset_index(drop=True)
         safe.index += 1
         st.dataframe(safe, width='stretch')
+
+elif page == "🔬 SHAP Explainability":
+    st.title("SHAP Explainability")
+    st.caption("Why does the model predict a delay? SHAP values explain each feature's contribution.")
+    st.markdown("---")
+
+    col1, col2 = st.columns(2)
+
+    with col1:
+        st.subheader("Global Feature Importance")
+        st.caption("Average SHAP impact across all predictions.")
+        for path in ["reports/shap_importance.png", "../reports/shap_importance.png"]:
+            if os.path.exists(path):
+                st.image(path)
+                break
+
+    with col2:
+        st.subheader("Feature Impact Direction")
+        st.caption("Red = high feature value, Blue = low. Right = increases delay probability.")
+        for path in ["reports/shap_beeswarm.png", "../reports/shap_beeswarm.png"]:
+            if os.path.exists(path):
+                st.image(path)
+                break
+
+    st.markdown("---")
+    st.subheader("Key Insights")
+
+    c1, c2 = st.columns(2)
+    with c1:
+        st.markdown("""
+**What drives delays most:**
+- 🕐 **Departure Hour** — strongest predictor. 5AM = ~7% delay rate, 8PM = ~27%
+- ✈ **Airline** — carrier historical delay rate is second most important
+- 📅 **Month** — June/July worst, September best
+        """)
+    with c2:
+        st.markdown("""
+**What matters less:**
+- 📍 **Distance** — least important. Long/short flights delay at similar rates
+- 🗺 **Origin/Dest** — moderate importance, less than time and carrier
+
+**Bottom line:** Book 5-6AM on Hawaiian or Delta in September for lowest delay risk.
+        """)
+
 
 # ══════════════════════════════════════════════════════════════════════════════
 # PAGE 5 — DELAY CAUSE ANALYSIS
