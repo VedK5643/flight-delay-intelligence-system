@@ -109,7 +109,8 @@ if page == "🏠 Overview":
 
     with col_l:
         st.subheader("Delay Rate by Month")
-        monthly = df.groupby("MONTH")["ARR_DEL15"].mean().mul(100).round(2).sort_index()
+        monthly = df.groupby("MONTH")["ARR_DEL15"].mean().mul(100).round(2)
+        monthly = monthly.reindex(range(1, 13))
         monthly.index = [MONTH_NAMES[m] for m in monthly.index]
         st.bar_chart(monthly)
 
@@ -387,7 +388,8 @@ elif page == "⚠ Delay Cause Analysis":
 
     # Seasonal
     st.subheader("Monthly Delay Pattern by Cause")
-    monthly_causes = delayed_df.groupby("MONTH")[causes].mean().sort_index()
+    monthly_causes = delayed_df.groupby("MONTH")[causes].mean()
+    monthly_causes = monthly_causes.reindex(range(1, 13))
     monthly_causes.index = [MONTH_NAMES[m] for m in monthly_causes.index]
     monthly_causes.columns = cause_labels
     st.line_chart(monthly_causes)
