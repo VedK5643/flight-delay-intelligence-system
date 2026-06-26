@@ -387,7 +387,7 @@ elif page == "⚠ Delay Cause Analysis":
 
     # Seasonal
     st.subheader("Monthly Delay Pattern by Cause")
-    monthly_causes = delayed_df.groupby("MONTH")[causes].mean()
+    monthly_causes = delayed_df.groupby("MONTH")[causes].mean().sort_index()
     monthly_causes.index = [MONTH_NAMES[m] for m in monthly_causes.index]
     monthly_causes.columns = cause_labels
     st.line_chart(monthly_causes)
