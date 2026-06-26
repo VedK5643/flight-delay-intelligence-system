@@ -192,7 +192,6 @@ elif page == "🔮 Delay Predictor":
 
                 st.metric("Delay Probability", f"{prob*100:.1f}%", delta=risk_label, delta_color="off")
                 st.progress(float(prob))
-                st.caption(f"Model confidence: {max(prob, 1-prob)*100:.1f}% | Threshold: 50%")
 
                 st.markdown("---")
                 st.markdown(f"""
