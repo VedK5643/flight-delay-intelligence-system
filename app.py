@@ -109,7 +109,7 @@ if page == "🏠 Overview":
 
     with col_l:
         st.subheader("Delay Rate by Month")
-        monthly = df.groupby("MONTH")["ARR_DEL15"].mean().mul(100).round(2)
+        monthly = df.groupby("MONTH")["ARR_DEL15"].mean().mul(100).round(2).sort_index()
         monthly.index = [MONTH_NAMES[m] for m in monthly.index]
         st.bar_chart(monthly)
 
@@ -181,14 +181,18 @@ elif page == "🔮 Delay Predictor":
                 prob    = model.predict_proba(features)[0][1]
 
                 if prob >= 0.5:
-                    st.error(f"⚠ Likely Delayed — {prob*100:.1f}% probability")
+                    risk_label = "🔴 HIGH RISK"
+                    st.error(f"⚠ Likely Delayed")
                 elif prob >= 0.35:
-                    st.warning(f"⚠ Borderline — {prob*100:.1f}% delay probability")
+                    risk_label = "🟡 MEDIUM RISK"
+                    st.warning(f"⚠ Borderline")
                 else:
-                    st.success(f"✅ Likely On Time — {prob*100:.1f}% delay probability")
+                    risk_label = "🟢 LOW RISK"
+                    st.success(f"✅ Likely On Time")
 
-                st.metric("Delay Probability", f"{prob*100:.1f}%")
+                st.metric("Delay Probability", f"{prob*100:.1f}%", delta=risk_label, delta_color="off")
                 st.progress(float(prob))
+                st.caption(f"Model confidence: {max(prob, 1-prob)*100:.1f}% | Threshold: 50%")
 
                 st.markdown("---")
                 st.markdown(f"""
